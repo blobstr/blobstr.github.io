@@ -1,0 +1,10 @@
+#!/bin/bash
+
+clear
+
+OSNAME="Ubuntu";
+
+if [ "$EUID" -ne 0 ]
+  then echo "Please run $OSNAME server.build as root"
+  exit
+fi
