@@ -1,6 +1,6 @@
 #!/bin/bash
 
-msg=''
+commsg=''
 
 sudo git add .
 read -p 'Commit message: ' commsg
