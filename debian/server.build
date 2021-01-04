@@ -1,10 +1,72 @@
 #!/bin/bash
 
-clear
+/usr/bin/clear
 
-OSNAME="Ubuntu";
+OSNAME=$(awk -F= '/^NAME/{print $2}' /etc/os-release);
+
+export italic='\e[3m'
+export reset_='\e[0m'
+export purple='\e[0;35m'
+export lgreen='\e[1;32m'
+export user_logged_in=$(logname)
 
 if [ "$EUID" -ne 0 ]
-  then echo "Please run $OSNAME server.build as root"
+  then echo "Please run server.build as root";
   exit
 fi
+
+curl http://localhost/debian/servimg.txt
+
+echo "Starting server builder..";
+sleep 1
+
+if [[ $OSNAME == *"Debian"* ]]; then
+  echo "Operating system is Debian..";
+
+  command -v apache3 >/dev/null 2>&1 || {
+
+      echo -en >&2 "Installing Apache Server... ";
+      #sudo apt install -y apache2 >/dev/null 2>&1 &&
+      echo -e "[ ${lgreen}OK${reset_} ]";
+
+  }
+
+  echo -ne "\nEnter your domain name (eg domain.com): ${lgreen}";
+  read domainName
+
+  echo -e "${reset_}Your domain: ${lgreen}${domainName}${reset_}";
+  sleep 1
+
+  sudo a2ensite 000-default.conf >/dev/null 2>&1 && echo "Default configuration disabled.";
+  sleep 1
+
+  echo "Deleting default configuration." && sudo rm /home/${user_logged_in}/Documents/config
+  sleep 1
+
+  echo "Creating new configuration file." && sudo touch /home/${user_logged_in}/Documents/config
+  sleep 1
+
+  echo "
+  <VirtualHost *:80>
+
+          ServerAdmin webmaster@localhost
+          DocumentRoot /var/www/html
+          ServerName ${domainName}
+          ServerAlias www.${domainName}
+
+          ErrorLog ${APACHE_LOG_DIR}/error.log
+          CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+  </VirtualHost>
+
+  " > /home/${user_logged_in}/Documents/config && echo "Config changes written.";
+      sleep 1
+      sudo a2ensite ${domainName}.conf >/dev/null 2>&1 && echo -e "Configuration for ${lgreen}${domainName}${reset_} enabled.";
+      sleep 1
+      sudo systemctl reload apache2 >/dev/null 2>&1 && echo "Apache has reloaded.";
+
+
+  exit
+fi
+
+echo "This server build is made for Debian Linux, your machine does not run Debian."
