@@ -6,3 +6,29 @@ body {
   color: #3F3B3B;
   background: #F5F5ED;
 }
+
+.header .container {
+  padding-top: 40px;
+  padding-bottom: 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+.header .logo {
+  overflow: hidden;
+  text-align: center;
+  z-index: 1;
+}
+
+.header .logo img {
+  max-height: 100px;
+  vertical-align: top;
+}
+
+.header .logo h1 {
+  display: inline;
+  font-size: 4em;
+  line-height: 110px;
+  margin: 0 10px;
+  font-weight: 600;
+}
