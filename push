@@ -1,6 +1,5 @@
 #!/bin/bash
 
 sudo git add .
-
 sudo git commit -a -m "updates"
 sudo git push -u origin
